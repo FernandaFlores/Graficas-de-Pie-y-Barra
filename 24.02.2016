@@ -1,0 +1,64 @@
+#### ejercicio clase 
+### Bajar la base de datos  Variables del cuestionario de ocupación y empleo I del portal del INEGI del segundo trimestre del 2015 
+##Importar la base de datos .dbf en R
+#### Seleccionar solo a la entidad: VERACRUZ
+### etiquetar las preguntas ¿Aproximadamente cuántas personas, incluyendo al dueño, laboran donde trabaja ...?
+##P5 y p2e
+### hacer tablas expandidas de las variables que etiquetaron con P1.... ####NUEVO#####
+
+##importar
+install.packages("foreign")
+require(foreign)
+install.packages("questionr")
+require(questionr)
+coe1t215<-read.dbf("C:\\Users\\SALA-C14\\Documents\\COE1T215.dbf")
+coe1t215<-data.frame(coe1t215)#hacemos la base de datos data frame
+str(coe1t215)#estructura de la base de datos 
+attach(coe1t215)
+
+#Subset con VERACRUZ
+coe1t215$ENT01<-as.numeric(as.character(coe1t215$ENT))
+entfed1<-subset(coe1t215,(ENT01==30))
+entfed<-subset(coe1t215,(ENT==30))
+View(entfed)
+tabla<-table(entfed1$ENT01)
+View(tabla)
+
+
+###ETIQUETAR VARIABLES###
+##P3L
+entfed$P3L<-as.numeric(as.character(entfed$P3L))#cambia a numérico
+is.numeric(entfed$P3L)
+entfed$P3L<-ordered(entfed$P3L,levels=c(01,02,03,04,05,06,07,08,09,10,11,99),labels=c("1 persona","2 a 5 PERSONAS","6 A 10 PERSONAS","11 A 15 PERSONAS","16 A 20 PERSONAS","21 A 30 PERSONAS","31 A 50 PERSONAS","51 A 100 PERSONAS","101 A 250 PERSONAS","251 A 500 PERSONAS","501 Y MÁS PERSONAS","NO SABE"))
+c2<-table(entfed$P3L)
+View(c2)
+
+
+##P5
+entfed$P5<-as.numeric(as.character(entfed$P5))#cambia a numérico
+is.numeric(entfed$P5)
+entfed$P5<-ordered(entfed$P5,levels=c(1,2,3,9),labels=c("Sí","NO TRABAJÓ LA SEMANA PASADA","NO SE ENCONTRÓ EN ESA SITUACIÓN","NO SABE"))
+c3<-table(entfed$P5)
+View(c3)
+
+##P2E
+entfed$P2E<-as.numeric(as.character(entfed$P2E))#cambia a numérico
+is.numeric(entfed$P2E)
+entfed$P2E<-ordered(entfed$P2E,levels=c(1,2,3,4,5,6,9),labels=c("UNA PERSONA TEMPORALMENTE AUSENTE DE SU ACTIVIDAD U OFICIO?","PENSIONADO O JUBILADO EN SU EMPLEO?","ESTUDIANTE?","UNA PERSONA QUE SE DEDICA A LOS QUEHACERES DE SU","UNA PERSONA CON ALGUNA LIMITACIÓN FÍSICA O MENTAL QUE LE IMPIDE TRABAJAR POR EL RESTO DE SU VIDA?","OTRA CONDICIÓN","NO SABE"))
+c4<-table(entfed$P2E)
+View(c4)
+
+##P1
+entfed$P1<-as.numeric(as.character(entfed$P1))#cambia a numérico
+is.numeric(entfed$P1)
+entfed$P1<-ordered(entfed$P1,levels=c(1,2),labels=c("SI","NO"))
+c5<-table(entfed$P1)
+View(c5)
+
+#TABLAS
+w<-wtd.table(entfed$P3L,entfed$P1,weights = entfed$FAC)
+w
+q<-wtd.table(entfed$P5,entfed$P1,weights = entfed$FAC)
+q
+j<-wtd.table(entfed$P2E,entfed$P1,weights = entfed$FAC)
+j
