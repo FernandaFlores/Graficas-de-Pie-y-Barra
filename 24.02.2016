@@ -56,7 +56,7 @@ c5<-table(entfed$P1)
 View(c5)
 
 #TABLAS
-w<-wtd.table(entfed$P3L,entfed$P1,weights = entfed$FAC)
+w<-wtd.table(entfed$P3L,entfed$P1,weights = entfed$FAC) #FAC, expandir tablas
 w
 q<-wtd.table(entfed$P5,entfed$P1,weights = entfed$FAC)
 q
