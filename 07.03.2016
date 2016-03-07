@@ -1,0 +1,55 @@
+help("AirPassengers")
+data("AirPassengers")
+seriet<-(AirPassengers)
+class(seriet)
+start(seriet);end(seriet);frequency(seriet)
+seriet
+ts() #función para declarar una BD como serie de tiempo
+##ppp<-ts(base1,start = c(1998,1),freq=4)
+plot(seriet)
+x11()
+layout(1:2) #ver más gráficas en un recuadro
+plot(seriet,main="Número de pasajeros aéreos en Estados Unidos, 1949-1960",xlab="Pasajeros (miles)",ylab="Años")
+plot(aggregate(seriet))
+
+
+###EJERCICIO###
+# 1) Generar un data frame con la tasa de desocupaciónn que inicia en el primer trimestre del 2005.
+##Tasa desocupación 3.4, 4.8, 3.3, 5.6, 3.2, 2.9, 1.9, 2.8, 6.0, 4.3, 2.2
+# 2) Convertirla en Serie de Tiempo y graficar la ST con la tendencia.
+
+##PUNTO EXTRA lIBRARla Del 2do EXáMEN
+# 3) Obtener un pdf, .jpg, .tiff, .pgn con las dos gráficas en una misma imagen
+
+
+#1)
+desc<-c("1er trimestre","2do trimestre","3er trimestre","4to trimestre")
+año<-c(2005,2006,2007)
+tasa<-c(3.4, 4.8, 3.3, 5.6, 3.2, 2.9, 1.9, 2.8, 6.0, 4.3, 2.2,NA)
+data=expand.grid("Año"=año,"Tasa de desocupación"=desc)
+data<-cbind(data,count=tasa)
+data=tapply(data$count,data[,1:2],sum)
+View(data)
+
+
+#2)
+serie<-ts(tasa,start = c(2005,1),freq=4)
+serie
+class(serie) #comprobar que es ST
+x11()
+layout(1:2) 
+plot(serie,main="Tasa de desocupación",xlab="Trimestre",ylab="Tasa")
+plot(aggregate(serie),main="Tasa de desocupación",xlab="Trimestre",ylab="Tasa")
+
+#3)
+jpeg("TasasDesc.jpeg")
+layout(1:2) 
+plot(serie,main="Tasa de desocupación",xlab="Trimestre",ylab="Tasa")
+plot(aggregate(serie),main="Tasa de desocupación",xlab="Trimestre",ylab="Tasa")
+dev.off()
+
+pdf("TasasDesc.pdf")
+layout(1:2) 
+plot(serie,main="Tasa de desocupación",xlab="Trimestre",ylab="Tasa")
+plot(aggregate(serie),main="Tasa de desocupación",xlab="Trimestre",ylab="Tasa")
+dev.off()
