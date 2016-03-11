@@ -1,0 +1,40 @@
+#Simulación de series de tiempo
+#Vamos a simular un indicador
+#para la simulación en principio necesitamos alguna información
+#valor máximo, mínimo y el número de datos
+
+##en este ejemplo vamos a proponer la población en México
+##que el valor mínimo seran 100, máx 120, 15 datos que inicien en 2000
+
+pob<-sample(100:120,15,replace = F) #sample--genera datos aleatorios
+
+## la convertimos en serie de tiempo
+pobts<-ts(pob,frequency = 1,start = (2000))
+plot(pobts)
+plot(aggregate(pobts),main="Población en México",xlab="año",ylab="habitantes")
+
+##BAJAR DE INEGI LA OCUPACIÓN DE LAS PERSONAS
+##IMPORTAR CSV
+ocu<-ts(read.csv(("C:\\Users\\SALA-C11\\Desktop\\ocupa.csv"),header=FALSE),frequency=4,start=2005);
+plot(ocu)
+plot(aggregate(ocu),main="Porcentaje de Población Ocupada",xlab="año",ylab="Porcentaje")
+
+##EJERICIO
+#Simular la tasa de desocupación, 3% a 8%, 2005, trimestral, que genere 40 datos
+#Bajar de INEGI Tasa de desocupación
+#importar en R
+#Comparar simulada con inegi
+#simulada
+des<-sample(3:8,44,replace = TRUE)
+desoc<-ts(desoc,frequency = 4,start = 2005)
+plot(desoc)
+
+#importada
+desocupados<-ts(read.csv(("C:\\Users\\SALA-C11\\Desktop\\desoc.csv"),header=FALSE),frequency=4,start=2005)
+plot(desocupados)
+plot(aggregate(desocupados))
+desocupados
+
+#comparar gráficas
+x11()
+plot(cbind(des,desocupados),main="PORCENTAJE DE POBLACIÓN DESOCUPADA",xlab="Años",col="deeppink")
