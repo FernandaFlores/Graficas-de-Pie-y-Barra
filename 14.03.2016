@@ -1,0 +1,46 @@
+#EQUIPO: FERNANDA GONZÁLEZ, ELISA BASTIDA, PAZ ALEXIA DÍAZ Y FERNANDA FLORES
+##BAJAR DE INEGI LA BASE
+##IMPORTAR CSV
+indi<-ts(read.csv(("C:\\Users\\SALA-C11\\Documents\\indicadores.csv"),header=TRUE),frequency=4,start=2005);
+class(indi)
+
+desoparcial<-ts(indi[,1],start = 2005,frequency = 4)
+asala<-ts(indi[,2],start = 2005,frequency = 4)
+til1<-ts(indi[,3],start = 2005,frequency = 4)
+
+seriemultiple<-ts.intersect(desoparcial,asala,til1) #Serie de tiempo multiple con 3 variables
+
+plot(seriemultiple,main="SERIE DE TIEMPO MÚLTIPLE",xlab="Años",col="coral")
+
+################SEPARAR UNA SERIE DE TIEMPO DEPENDIENDO DEL ANÁLISIS
+seriemultiple05.09<-window(seriemultiple,start=c(2005,1),end=c(2009,4))
+seriemultiple10.15<-window(seriemultiple,start=c(2010,1),end=c(2015,4))
+
+plot(seriemultiple05.09,main="SERIE DE TIEMPO MÚLTIPLE",xlab="Años",col="skyblue")
+plot(seriemultiple10.15,main="SERIE DE TIEMPO MÚLTIPLE",xlab="Años",col="magenta")
+start(seriemultiple);end(seriemultiple)
+
+########EJERICIO######
+ocuemp<-ts(read.csv(("C:\\Users\\SALA-C11\\Documents\\ocupacionyempleo.csv"),header=TRUE),frequency=4,start=2005);
+class(ocuemp)
+
+servprof<-ts(ocuemp[,1],start = 2005,frequency = 4)
+salarios5<-ts(ocuemp[,2],start = 2005,frequency = 4)
+horas15<-ts(ocuemp[,3],start = 2005,frequency = 4)
+prestaciones<-ts(ocuemp[,4],start = 2005,frequency = 4)
+
+plot(servprof,main="Servicios profesionales, financieros y corporativos",xlab="Años",ylab="Personas")
+plot(salarios5,main="Más de 5 salarios mínimos",xlab="Años",ylab="Personas")
+plot(horas15,main="Menos de 15 horas",xlab="Años",ylab="Personas")
+plot(prestaciones,main="Con Prestaciones",xlab="Años",ylab="Personas")
+
+serie.multiple<-ts.intersect(servprof,salarios5,horas15,prestaciones) #Serie de tiempo multiple con 3 variables
+plot(serie.multiple,main="SERIE DE TIEMPO MÚLTIPLE",xlab="Años",col="coral")
+
+serie.multiple05.09<-window(serie.multiple,start=c(2005,1),end=c(2009,4))
+serie.multiple10.15<-window(serie.multiple,start=c(2010,1),end=c(2015,4))
+
+plot(serie.multiple05.09,main="SERIE DE TIEMPO: OCUPACIÓN Y EMPLEO",xlab="Años",col="skyblue")
+plot(serie.multiple10.15,main="SERIE DE TIEMPO: OCUPACIÓN Y EMPLEO",xlab="Años",col="magenta")
+start(serie.multiple);end(serie.multiple)
+
