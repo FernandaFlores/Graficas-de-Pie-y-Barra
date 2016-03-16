@@ -1,0 +1,72 @@
+#### Generar 4 objetos con datos aleatorios y que tengan 60 datos
+### dato 1 de número de profesionista (mill)rango de 5 a 8
+### dato 2 crec pib rango de 0 a 5
+### dato 3 porcentaje de ocupados rango de 40 a 60
+### dato 4 porcentaje de desocupados rango de 3 a 8
+
+dato1<-sample(5:8,60,replace = T)
+dato2<-sample(0:5,60,replace = T)
+dato3<-sample(40:60,60,replace = T)
+dato4<-sample(3:8,60,replace = T)
+
+#### 1) una vez que generen los datos hacer un data frame de los 4 objetos
+tabla<-data.frame(dato1,dato2,dato3,dato4)
+names(tabla)<-paste(c("Número de Profesionista","Crecimiento del PIB","% de Ocupados","% de Desocupados"))
+View(tabla)
+
+#### 2) mostrar en consola los primeros 12 y ultimos 12 datos
+tabla[c(seq(1:12),seq(49:60)),seq(1,4)]
+
+#### 3) convertir los objetos en series de tiempo desde el data frame comezando en 2010 y son datos mensuales
+serie<-ts(tabla,start = 2010,frequency = 12)
+serie
+serie.dato1<-ts(tabla[,1],start = 2010,frequency = 12)
+serie.dato2<-ts(tabla[,2],start = 2010,frequency = 12)
+serie.dato3<-ts(tabla[,3],start = 2010,frequency = 12)
+serie.dato4<-ts(tabla[,4],start = 2010,frequency = 12)
+
+#### 4) graficar los profesionistas y ocupados en la misma imagen
+plot(cbind(serie.dato1,serie.dato3),main="Profesionistas y Ocupados",xlab="Años",col="coral")
+
+#### 5) graficar pib y desocupados en la misma imagen
+plot(cbind(serie.dato2,serie.dato4),main="PIB y Desocupados",xlab="Años",col="coral")
+
+#### 6) graficar todas juntas
+plot(serie,main="Profesionistas, PIB, Ocupados y Desocupados",xlab="Años",col="coral")
+plot(cbind(serie.dato1,serie.dato2,serie.dato3,serie.dato4),main="Profesionistas, PIB, Ocupados y Desocupados",xlab="Años",col="coral")
+
+#### 7) creaR serie de tiempo multiple!!!!8
+serie.multiple<-ts.intersect(serie.dato1,serie.dato2,serie.dato3,serie.dato4) 
+
+#### 8) graficar serie de tiempo multiple 
+plot(serie.multiple,main="SERIE DE TIEMPO MÚLTIPLE",xlab="Años",col="coral")
+
+#### 9) dividir serie de tiempo y graficar solo el ultimo año...
+start(serie.multiple);end(serie.multiple)
+serie.multiple14<-window(serie.multiple,start=c(2014,1),end=c(2014,12))
+plot(serie.multiple14,main="Serie Multiple 2014",xlab="Años",col="green")
+
+#### 8) analizar las gráficas (si hay alguna tendencia o variacion estacional) (investigar)
+    #En las gráficas se puede observar que no existe una variación estacional, es decir tiene 
+    #variaciones irregulares ya que en muchos de los años hay puntos máximos. Asímismo podemos
+    #podemos decir que la tendencia que se presenta es no lineal, ya no que su comportamiento es 
+    #curvilineo con altas y bajas.
+
+#Tendencia lineal
+##La tendencia de una serie viene dada por el movimiento general a largo plazo de la serie.
+##La tendencia a largo plazo de muchas series de negocios (industriales y
+##comerciales), como ventas, exportaciones y producción, con frecuencia se aproxima a una
+##línea recta. Esta línea de tendencia muestra que algo aumenta o disminuye a un ritmo
+##constante. El método que se utiliza para obtener la línea recta de mejor ajuste es el Método
+##de Mínimos Cuadrados. 
+
+#Tendencia no lineal
+##Cuando la serie de tiempo presenta un comportamiento curvilíneo se dice que este
+##comportamiento es no lineal. Dentro de las tendencias no lineales que pueden presentarse
+##en una serie se encuentran, la polinomial, logarítmica, exponencial y potencial, entre otras.
+
+#Variación estacional
+##El componente de la serie de tiempo que representa la variabilidad en los datos debida 
+##a influencias de las estaciones, se llama componente estacional. Esta variación 
+##corresponde a los movimientos de la serie que recurren año tras año en los mismos 
+##meses (o en los mismos trimestres) del año poco más o menos con la misma intensidad. 
