@@ -1,0 +1,15 @@
+#Simular la tasa de desocupación del ejercicio anterior
+##Crear serie de tiempo con nombre tdesoc para descomponer su serie de tiempo
+##se utiliza la función decompose()
+  #tdesoc.de<-decompose()
+  #names(tdesoc.de)
+
+tdesoc<-sample(3:8,60,replace = T)
+tdesoc<-ts(tdesoc,start = 2010,frequency = 12)
+tdesoc.de<-decompose(tdesoc)
+names(tdesoc.de)
+plot(tdesoc.de,)
+plot(decompose(tdesoc))
+Trend<-tdesoc.de$trend
+Season<-tdesoc.de$seasonal
+tdesoc.dem<-decompose(tdesoc,type = "mult")
