@@ -1,0 +1,44 @@
+ICA<-ts(read.csv(("C://Users//SALA-C19//Documents//table.csv"),header = T),frequency=360,start=2013,end = 2016);
+ICA
+
+#DESCOMPONER UNA ST
+##La descomposición de la ST nos permite conocer la estacionalidad, la tendencia y la aleatoriedad de la ST
+icaadi<-decompose(ICA)
+
+
+#Para ver gráficamente una descomposición de la ST en R, existen 2 formas de graficar la descomposición
+#1) directo de la serie de tiempo
+plot(decompose(ICA))
+plot(icaadi)
+##DEBEN DAR LOS MISMOS RESULTADOS
+
+#MODELO ADITIVO....x t=mt + st + zt
+#MODELO MULTIPLICATIVO....X t=mt * st + zt
+
+#Para descomponer una ST en un modelo aditivo se utiliza lo siguiente
+icaaditivo<-decompose(ICA) #por default nos da el modelo aditivo
+
+#Para descomponer una ST en un modelo multiplicativo se utiliza lo siguiente
+icamult<-decompose(ICA,type = "mult")
+
+#GRÁFICAR LOS 2 MODELOS
+plot(icaaditivo)
+plot(icamult)
+
+#Función names()
+names(icaadi)
+icaadi$type
+names(icamult)
+icamult$type
+
+#Asignar un objeto para los elementos que nos interesan
+tendad<-icaaditivo$trend #asignamos la tendencia del modelo aditivo
+icaaditivo$trend
+
+tendmult<-icamult$trend #asignamos la tendencia del modelo multiplicativo
+estadi<-icaaditivo$seasonal #asignamos la estacionalidad del modelo aditivo
+estmult<-icamult$seasonal #asignamos la estacionalidad del modelo multiplicativo
+
+#Gráficar tendencia, estacionalidad, etc.
+ts.plot(cbind(tendad,tendad*estadi),lty=1:2,col=c(5,6))
+#lty---sirve para ver diferentes tipos de líneas
