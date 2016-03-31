@@ -1,0 +1,46 @@
+#EJERICICIO ###GRUMAB.MX  2000-2016
+gruma<-ts(read.csv(("C://Users//SALA-C19//Documents//gruma.csv"),header = T),frequency=360,start=2000,end = 2016);
+View(gruma)
+
+#descomponer en 
+##modelo aditivo
+grumaaditivo<-decompose(gruma) 
+##modelo multiplicativo
+grumamultiplicativo<-decompose(gruma,type = "mult") 
+
+
+##gráficarlos
+plot(grumaaditivo,col=6)
+plot(grumamultiplicativo,col=10)
+
+
+###extraer la tendencia y estacionalidad y aleatoriedad
+tendaditivo<-grumaaditivo$trend #asignamos la tendencia del modelo aditivo
+tendmultiplicativo<-grumamultiplicativo$trend #asignamos la tendencia del modelo multiplicativo
+
+estaditivo<-grumaaditivo$seasonal #asignamos la estacionalidad del modelo aditivo
+estmultiplicativo<-grumamultiplicativo$seasonal #asignamos la estacionalidad del modelo multiplicativo
+
+aleaditivo<-grumaaditivo$random #asinamos la aleatoriedad del modelo aditivo
+alemultiplicativo<-grumamultiplicativo$random #asinamos la aleatoriedad del modelo multiplicativo
+
+####exportar la tendencia, estacionalidad y aleatoriedad en 3 columnas en excel
+tendencia<-data.frame(tendaditivo,tendmultiplicativo)
+dimnames(tendencia)<-list(c(1:5761),c("Tendencia Aditivo","Tendencia Multiplicativo"))
+estacionalidad<-data.frame(estaditivo,estmultiplicativo)
+dimnames(estacionalidad)<-list(c(1:5761),c("Estacionalidad Aditivo","Estacionalidad Multiplicativo"))
+aleatoriedad<-data.frame(aleaditivo,alemultiplicativo)
+dimnames(aleatoriedad)<-list(c(1:5761),c("Aleatoriedad Aditivo","Aleatoriedad Multiplicativo"))
+View(tendencia)
+
+install.packages("XLConnect")
+require(XLConnect)
+mi.fichero=loadWorkbook("C://Users//SALA-C19//Documents//ferflores.xlsx", create = FALSE)
+appendWorksheet(mi.fichero,tendencia,sheet="Tendencia",header = TRUE,rownames = NULL)
+appendWorksheet(mi.fichero,estacionalidad,sheet="Estacionalidad",header = TRUE,rownames = NULL)
+appendWorksheet(mi.fichero,aleatoriedad,sheet="Aleatoriedad",header = TRUE,rownames = NULL)
+saveWorkbook(mi.fichero,"C://Users//SALA-C19//Documents//ferflores.xlsx")
+
+#####graficar...tendencia y tendencia *estacionalidad en R
+ts.plot(cbind(tendaditivo,tendaditivo*estaditivo),lty=1:2,col=c(5,6))
+ts.plot(cbind(tendmultiplicativo,tendmultiplicativo*estmultiplicativo),lty=1:2,col=c(29,28))
