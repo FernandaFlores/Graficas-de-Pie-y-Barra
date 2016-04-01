@@ -1,0 +1,59 @@
+#MODELO ADITIVO:= este modelo es apropiado cuando la magnitud de las fluctuaciones estacionales de la serie no varia al hacerlo la tendencia
+    ##La TENDENCIA se incrementa y la ESTACIONALIDAD se mantiene
+#MODELO MULTIPLICATIVO:= este modelo se utiliza cuando la magnitud de las fluctuaciones estaciobnales de la serie crece y decrece proporcionalmente con los crecimientos y decrecimientos de la tendencia, respectivamente
+    ##La TENDENCIA se incrementa y la ESTACIONALIDAD se incrementa
+## una vez que logramos descomponer la ST en diversos, los elementos de estacionalidad y tendencia hay que desestacionalizar la ST y eliminar la tendnecia
+
+#Existe tendencia cuando existe un patrón en los datos a largo plazo, ya sdea que aumentan o disminuyen los datos.
+#La estacionalidad existe cuando la ST es influenciada por factores estacionales (por ejemplo; el trimestre del año, el mes, o el día de la semana)
+#Existen componentes c íclicos en los datos cuando se detectan incrementos y caídas que no son de tiempo determinado (duración por lo general de al menos 2 años)
+
+#3 de estos 3 elementos normalmente existen confusiones para detectarlos entre la estacionalidad y el componente cíclico
+#Principales diferencias entre estos dos componentes:
+#1)Patrón estacional longitud constante; patrón cíclico longitud variables
+#2)Duración media del componente cíclico más largo que la longitud del patrón estacional
+#3)Magnitud de cíclico más variable que magnitud del patrón estacional
+#4)El momento de picos y caídas es predecible con los datos estacionales, pero impredecible a largo plazo con datos cíclicos
+
+install.packages("fpp")
+require(fpp)
+
+plot(window(elec,start = 1980),ylab = "GWh",xlab="Year",main="Australian electricity production")
+#Hay estacionalidad, hay tendencia y no hay componente cíclico
+##TENDENCIA: porque hay incremento
+##ESTACIONAL: mismo comportamiento cada cierto tiempo
+##CÍCLICO: cuando tiene picos muy largos
+
+plot(bricksq,ylab="Millon units",xlab="Year",main="Australian clay brick production")
+#Hay estacionalidad y es cíclico, no hay mucha tendencia
+
+plot(hsales,main="Sales of new one-family houses,USA",ylab="Total sales",xlab="Year")
+#No hay estacionalidad ni tendencia, es posiblememnte cíclica
+
+###EJEMPLOS: Detectar si hay Tendencia, Estacionalidad y Ciclo
+ica<-read.csv("ica.csv",header = T)
+icats<-ts(ica[,5],start = 2000,frequency = 12)
+jpeg("ICA.jpeg")
+plot(icats,main="ACCIONES ICA",ylab="PRECIO CIERRE")
+dev.off()
+#No presenta estacionalidad, hay un cíclo entre los años 2007-2008 y la tendencia está marcada a partir del año 2005 hasta la crisis que se presentó en el año 2008
+
+gruma<-read.csv("gruma.csv",header = T)
+grumats<-ts(gruma[,5],start = 2000,frequency = 12)
+jpeg("GRUMA.jpeg")
+plot(grumats,main="ACCIONES GRUMA",ylab="PRECIO CIERRE")
+dev.off()
+#No presenta estacionalidad, se observa una tendencia a partir del año 2010 y existe un posible cíclo entre el año 2012 y el 2014
+
+bimbo<-read.csv("bimbo.csv",header = T)
+bimbots<-ts(bimbo[,5],start = 2000,frequency = 12)
+jpeg("BIMBO.jpeg")
+plot(bimbots,main="ACCIONES BIMBO",ylab="PRECIO CIERRE")
+dev.off()
+#No presenta estacionalidad, hay cierta tendencia del año 2000 hasta el 2005 y existen cíclos que se presentan 
+##en el año 2008 (probablemente por la crisis), en el 2010 se presento una tendencia lo cual lleva a un cíclo y 
+##para el 2011 el ciclo fue mayor de aproximadamente una disminución del 80% en el precio de la acción
+
+jpeg("ACCIONES.jpeg")
+ts.plot(icats,grumats,bimbots,main="PRECIO DE LAS ACCIONES",xlab="AÑOS",ylab="Precio")
+dev.off()
