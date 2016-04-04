@@ -1,0 +1,140 @@
+##Ahora bien, una vez que tenemos y conocemos la gráfica para determinar con mayor precisión las tendencias y estacionalidad se utiliza la función seasonplot que está en la librería fpp
+ica<-read.csv("ica.csv",header = T)
+icats<-ts(ica[,5],start = 2000,frequency = 12)
+
+gruma<-read.csv("gruma.csv",header = T)
+grumats<-ts(gruma[,5],start = 2000,frequency = 12)
+
+bimbo<-read.csv("bimbo.csv",header = T)
+bimbots<-ts(bimbo[,5],start = 2000,frequency = 12)
+
+install.packages("fpp")
+require(fpp)
+seasonplot(icats,s=12,year.labels = TRUE,main="Valor de Acciones ICA", ylab ="Valor de cierre",col = rainbow(20),year.labels.left = TRUE,pch=19)
+
+#Con monthplot podemos hacer un análisis de la st dependiendo del periodo de los datos por ejemplo si tenemos trimestral se pueden analizar los 4 trimestres
+monthplot(icats,ylab = "Valor Cierre",xlab="Month",main="Valor de Acciones ICA")
+
+##FUNCIONES UTILIZADAS
+ST gráficas
+plot() or plot.ts ()
+
+Gráfica de temporalidad
+seasonplot()
+
+Gráficas de subseries temporales
+monthplot()
+
+###CORRELACIÓN Y COVARIANZA
+#Covarianza y Correlación: medida del grado
+#relación lineal entre dos variables (x^y)
+#autocovarianza y autocorrelación: medida
+#relación lineal entre valores retardados en una ST y se mide la relación entre. yt y yt-1
+#yt y yt-2
+#yt y yt-3, etc
+#para desestacionalizar y eliminar la tendencia necesitamos conocer la correlación de las variables para
+#realizar mejores pronósticos de nuestra ST
+#en muchos casos laS variables están correlacionadas, entonces, sí nosotros logramos identificar la correlación
+#podemos mejorar los pronósticos si las correlaciones son altas para la ST observada
+
+#AUTOCORRELACIÓN
+#a veces sucede que los valores que toma una variable en el tiempo no son independientes entre sí. sino que un valor determinado
+#depende de los valores anteriores, para obtener la correlación se necesita abtener primero la covarianza
+
+###EJERICICIO1###
+#Verifiquen que la fórmula de la covarianza y la correlación den el mismo resultado que las funciones cov(x,y) y cor(x,y)
+#la covarianza es una medida de asociación entre dos variables
+#Cor(x,y)=cov(x,y)/sd(x)sd(y)
+#cov(x,y)=suma((xi-x(media))(yi-y(media)))/(n-1)
+
+correlacion<-cor(icats,bimbots)
+covarianza<-cov(icats,bimbots)
+desv.ica<-sd(icats)
+desv.bimbo<-sd(bimbots)
+n<-length(icats)
+n
+
+#Cor(x,y)=cov(x,y)/sd(x)sd(y)
+correlacion1<-covarianza/(desv.ica*desv.bimbo)
+correlacion1;correlacion
+
+#cov(x,y)=suma((xi-x(media))(yi-y(media)))/(n-1)
+covarianza1<-sum((icats-mean(icats))*(bimbots-mean(bimbots)))/(n-1)
+covarianza1;covarianza
+
+###EJERICICIO2###
+#1)Analizar los años de las 3 empresas elegidas (seasonplot) y elegir los 3 años que ubiquen con estacionalidad, ciclo o tendencia (interpretar los 3 años)
+#2)Calcular con la fórmula y la función de covarianza y correlación en la combinación de las 3 empresas, es decir, 
+##empresa1=x, empresa2=y y empresa3=z, Calcular las correlaciones de
+###cor(x,y), cor(y,z) y cor(x,z) para hacerlas "compatibles utilicen el window
+
+#1)
+x11()
+seasonplot(icats,s=12,year.labels = TRUE,main="Valor de Acciones ICA", ylab ="Valor de cierre",col = rainbow(20),year.labels.left = TRUE,pch=19)
+##En el año 2005 se presenta una tendencia muy marcada alrededor del 3er trimestre del año, el cual tiende en un incremento hasta el mes de octubre.
+##En el año 2008, como es de esperarse por la crisis, se presentó una gran tendencia negativa al igual que un gran ciclo, la cual se presenta alrededor del mes de febrero y llega a tope en el mes de julio
+##En el año 2007, se pueden observar grandes ciclos entre los trimestres 2 y 3 del año, esto a comparación de los precios de las acciones en los demás años
+
+seasonplot(bimbots,s=12,year.labels = TRUE,main="Valor de Acciones BIMBO", ylab ="Valor de cierre",col = rainbow(20),year.labels.left = TRUE,pch=19)
+##En el año 2010 se presentan pequeños cíclos en el año a comparación de los demás
+##En el año 2008, a bimbo no le pego de manera drástica la crisis, se presentó un pequeña tendencia negativa con un ciclo al término del año
+##En el año 2009, se pueden observar ciclos en los últimos trimestres del año, de igual manera se observa cierta estacionalidad para el último trimestre
+
+seasonplot(grumats,s=12,year.labels = TRUE,main="Valor de Acciones GRUMA", ylab ="Valor de cierre",col = rainbow(20),year.labels.left = TRUE,pch=19)
+##En el año 2011, probablemente se presentan cíclos, y se observa una tendencia no muy marcada que incia en el segundo mes del año.
+##En el año 2008, se podría decir que a gruma no le pego de manera drástica la crisis, ya que no se observa como tal una tendencia negativa mayor sin embargo se presenta un cíclo
+##En el año 2013, podemos observar cíclos en los últimos trimestres.
+#En el año 2006 hay una tendencia negativa notable que se presenta a partir del mes de junio y tiene una posible estacionalidad hasta el término del año
+
+#2)
+icats1<-window(icats,start=c(2002,2),end=c(2016,4))
+bimbots1<-window(bimbots,start=c(2002,2),end=c(2016,4))
+n<-length(icats1)
+n
+n<-length(grumats)
+n
+n<-length(bimbots1)
+n
+
+#cov(x,y)
+covarianza.empresas<-sum((icats1-mean(icats1))*(bimbots1-mean(bimbots1)))/(n-1)
+covarianza.empresas
+
+cov1<-cov(icats1,bimbots1)
+cov1
+
+#cor(y,z)
+covarianza.empresas1<-sum((bimbots1-mean(bimbots1))*(grumats-mean(grumats)))/(n-1)
+covarianza.empresas1
+
+cov2<-cov(bimbots1,grumats)
+cov2
+
+#cor(x,z)
+covarianza.empresas2<-sum((icats1-mean(icats1))*(grumats-mean(grumats)))/(n-1)
+covarianza.empresas2
+
+cov3<-cov(icats1,grumats)
+cov3
+
+#cor(x,y)
+correlacion.empresas<-cov(icats1,bimbots1)/(sd(icats1)*sd(bimbots1))
+correlacion.empresas
+
+cor1<-cor(icats1,bimbots1)
+cor1
+
+#cor(y,z)
+correlacion.empresas1<-cov(bimbots1,grumats)/(sd(bimbots1)*sd(grumats))
+correlacion.empresas1
+
+cor2<-cor(bimbots1,grumats)
+cor2
+
+#cor(x,z)
+correlacion.empresas2<-cov(icats1,grumats)/(sd(icats1)*sd(grumats))
+correlacion.empresas2
+
+cor3<-cor(icats1,grumats)
+cor3
+
