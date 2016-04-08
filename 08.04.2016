@@ -1,0 +1,32 @@
+##FUNCIÓN DE AUTOCORRELACIÓN
+##La autocorrelación mide la correlación entre dos variables separadas por k períodos
+
+#PROPIEDADES DE LA AUTOCORRELACIÓN
+#P0=1 (Ro)
+# -1<= P0 <=1
+#simetría Pj=pj-1
+
+install.packages("fpp")
+require(fpp)
+Acf(beer)
+xx<-Acf(beer,main="ACF of quarterly beer production")
+
+names(xx)
+xx$acf
+
+##Results for first 9 lags for beer data:
+  r1      r2      r3      r4    r5      r6      r7      r8    r9
+-0.126  -0.650  -0.094  0.863 -0.099  -0.642  -0.098  0.834 -0.116
+#R4 superior a la de los otros retardos
+#esto es debido a el patrón estacional en los datos
+  
+##La Gráfica que genera el ACF se le denomina correlograma y permite identificar la autocorrelación en una ST
+#Si hay estacionalidad, la ACF en el desfase temporal será grande y positivo
+  
+  ###NETFLIX
+netflix<-read.csv("netflix.csv",header = T)
+netflixts<-ts(netflix[,5],start = 2005,frequency = 12)
+plot.ts(netflixts)
+Acf(netflixts)
+xx<-Acf(netflixts,main="ACF of quarterly beer production")
+xx$acf
