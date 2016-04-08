@@ -1,0 +1,14 @@
+####EXÁMEN
+##2 partes
+#1) Generar un script (computadora)
+#2) Realizar comentarios o explicar las líneas de un script (papel)
+
+##Estructura
+#1)Manejo de Bases de Datos en R
+  #Exportar bases, Etiquetar, Generar una Base de Datos, Recodificar, Seleccionar casos, Gráficar
+#2)Series de Tiempo en R
+  #Declarar una ST, Dividir ST, Gráficar ST
+  ##Interpretar gráficas con estacionalidad, Tendencia y Ciclo
+##2.1) Como determinar estacionalidad en una ST con la función de autocorrelación, cálculo de correlación y covarianza
+
+#lty=tipo de puntos de la línea
