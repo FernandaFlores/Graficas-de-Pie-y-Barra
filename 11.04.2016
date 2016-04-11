@@ -1,0 +1,123 @@
+##repaso para exámen 
+#manejo de base de datos
+
+#generar una base de datos y declarar un data.frame
+#¿que es un data.frame en r?
+#para que es la c
+#importar bases de datos 
+#convertir de numérico a caracter o viceversa
+#uso de subset, seleccionador de casos
+##operadores logicos  &, |
+#$ de la base mandar a llamar una variable  
+#es importante cuando cambian a numérico en una nueva variable porque (es para el subset)
+#uso de attach--para mandar a llamar la base (predeterminada)
+#uso de detach--desajuntar la base de datos
+
+###CAMBIAR A NUMÉRICO LA VARIABLE
+#ES IMPORTANTE CUANDO CAMBIEN A NUMÉRICO EN UNA VARIABLE ¿POR QUÉ?
+baseinegi$R_DEF1<-as.numeric(as.character(baseinegi$R_DEF))
+baseinegi$C_RES1<-as.numeric(as.character(baseinegi$C_RES))
+
+###USO DE SUBSET
+precod<-subset(baseinegi,((R_DEF1==0)&(C_RES1==1|C_RES1==3)&(EDA1>=15&EDA1<=98)))
+precod1<-subset(baseinegi,((R_DEF1==0)&(C_RES1==1|C_RES1==3)&(EDA1>=15&EDA1<=98)),select=c(EDA,SEX,HRSOCUP))
+
+###USO DE ATTACH E HISTOGRAMAS
+attach(precod)
+detach
+
+  CLASE2V1<-table(CLASE2)
+  CLASE2V1
+hist(CLASE2)
+hist(CLASE2,main = "Gráfica 1, Distribución de la población de 15 años o más, 2015",xlab = "Tipo ocupada",ylab = "Población miles",xlim = c(1,4),ylim = c(0,200000),border = T,pch=18,col = c("orange","green","purple","pink"))
+#pch--grosor de la línea
+
+###PONDERAR CASOS
+install.packages("questionr")
+require(questionr)
+c1<-wtd.table(sdemt215$SEX,weights=sdem215$FAC) ##Factor de expresión
+
+###PONDERAR CASOS Y SACAR PORCENTAJES
+tabrama<-wtd.table(sdemt215$SEX,sdemt215$EDA,weights=sdemt215$FAC)
+c1.1<-round((tabrama/margin.table(tabrama))*100,2) #round--redondeo con 2 dígitos
+#margin.table---sacar los porcentajes de una tabla
+##Exportar con .csv, en un libro con diferentes hojas
+
+###ETIQUETAR
+sdemt215$SEX<-ordered(sdemt215$SEX,levels=c(1,2),labels=c("Hombres","Mujeres"))
+
+###RECODIFICAR 2 MÉTODOS
+  #MÉTODO 1
+SDEMT215$CLASE2.1[as.numeric(SDEMT215$CLASE2)>=0&as.numeric(SDEMT215$CLASE2)<=2]<-1
+SDEMT215$CLASE2.1[as.numeric(SDEMT215$CLASE2)>=3&as.numeric(SDEMT215$CLASE2)<=4]<-2
+  
+  #MÉTODO 2
+attach(SDEMT215)
+SDEMT215$CLASE2.2<-ifelse(as.numeric(CLASE2)>=1&as.numeric(CLASE2)<=2,1,ifelse(as.numeric(CLASE2)==3,2,3))
+
+###SERIES DE TIEMPO
+#1)Simular la Tasa de Desocupación, 3% a 8%, 2005, 40 datos, trimestral
+desoc<-sample(3:8,44,replace = T) #T--porque si queremos reemplazarlo
+tdesoc<-ts(desoc,frequency = 4,start = 2005)
+
+#declarar series de tiempo con frequency, start función ts
+ST<-ts(todo,frequency = 12,start = 2012)
+
+##GRÁFICAR LA SERIE DE TIEMPO CON
+plot(ST,xlab = "años 2010-2014",ylab = "número profesionales",main = "ST profesionales")
+
+###SERIE DE TIEMPO MÚLTIPLE
+prof<-sample(5:8,60,replace = T)
+cpib<-sample(0:5,60,replace = T)
+ocupa<-sample(40:60,60,replace = T)
+desocupa<-sample(3:8,60,replace = T)
+
+prof1<-ts(todo[,1],frequency = 12,start = 2010)
+cpib1<-ts(todo[,2],frequency = 12,start = 2010)
+ocupa1<-ts(todo[,3],frequency = 12,start = 2010)
+desocupa1<-ts(todo[,4],frequency = 12,start = 2010)
+
+seriemultiple<-ts.intersect(prof1,cpib1,ocupa1,desocupa1)
+####¿Describe 3 argumentos de la función ts?
+
+###SEPARAR ST
+seriem05.09<-window(seriemultiple,start = c(2005,1),end = c(2009,4))
+seriem10.15<-window(seriemultiple,start = c(2010,1),end = c(2015,4))
+
+plot(seriem05.09,main = "Serie de Tiempo múltiple de Toluca 2005-2009",xlab = "años",col=789)
+plot(seriem10.15,main = "Serie de Tiempo múltiple de Toluca 2010-2015",xlab = "años",col=622)
+      #para saber donde empieza y donde termina
+
+start(seriemultiple)
+end(seriemultiple)
+
+###DESCOMPOSICIÓN DE ST
+tdesoc.de<-decompose(tdesoc) ##por default es el modelo aditivo
+names(tdesoc.de) ##trend=tendencia(Mt), seasonal=efecto estacional(st), random=error(Zt)
+plot(tdesoc.de,col="salmon",xlab = "años",ylab = "tasa desocupación")
+Trend<-tdesoc.de$trend
+Season<-tdesoc.de$seasonal
+Trend
+
+###DETECTAR TENDENCIA, ESTACIONALIDAD Y CICLO CON GRÁFICAS
+#TENDENCIA--INCREMENTO O DISMINUCIÓN CLARA
+#ESTACIONALIDAD--EXISTE ALGÚN EFECTO TEMPORAL (DIARIO, SEMANAL,MENSUAL,ETC)
+#CICLO--CUANDO HAY CAMBIOS ABRUPTOS EN LA ST
+
+###CORRELACIÓN, COVARIANZA Y FUNCIÓN DE AUTOCORRELACIÓN
+sum((x-mean(x))*(y-mean(y)))/(n-1) #fórmula
+cov(x,y) #Función de R para obtener la covarianza
+cov(x,y)/(sd(x)*sd(y)) #fórmula
+cor(x,y) #Función de R para obtener la correlación
+
+###FUNCIÓN DE AUTOCORRELACIÓN
+require(forecast)
+require(fpp)
+
+Acf(nfixts)
+xx<-Acf(nfixts,main="Netflix")
+xx$acf #conocemos el valor de la autocorrelación en cada tiempo
+
+###VALORES DE AUTOCORRELACIÓN ALTA Y POSITIVA EXISTE ESTACIONALIDAD EN LA ST 
+###CORRELOGRAMA
+###GRÁFICA EN EL QUE SE EXPONE
