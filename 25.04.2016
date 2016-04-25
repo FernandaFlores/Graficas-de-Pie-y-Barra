@@ -1,0 +1,58 @@
+install.packages("foreign")
+require(foreign)
+install.packages("fpp")
+require(fpp)
+install.packages("forecast")
+library(forecast)
+
+labo<-read.csv("tasas.csv")
+part<-ts(labo[,3],start = 2005,frequency = 4)
+plot(part)
+Acf(part)
+
+######método de la media
+#mean (part,h) 
+partpro<-meanf(part,4)
+partpro
+plot(partpro)
+#part es la ST
+#el número de datos a proyectar en este caso es h=4
+
+######método ingenuo---pronostica con base al último valor de la ST
+partnai<-naive(part,4)
+partnai
+plot(partnai)
+rwf(part,3) #ALTERNATIVO--hace lo mismo que el naive
+
+######método ingenuo estacional
+partsnai<-snaive(part,4)
+partsnai
+plot(partsnai)
+
+######método de la deriva --- promedio en base a los aumentos o reducción de la ST
+partder<-rwf(part,4,drift = T)#drift--activa que sea la deriva
+partder
+plot(partder)
+#rwf(st,h,drift=TRUE)
+
+#####EJEMPLOS
+part1<-window(part,start=2005,end=2010)
+partaj1<-meanf(part1,h=4)
+partaj2<-naive(part1,h=4)
+partaj3<-snaive(part1,h=4)
+
+x11()
+plot(partaj1,plot.conf=T,main="Proyección tasas de desempleo trimestre")
+lines(partaj2$mean,col=2)
+lines(partaj3$mean,col=3)
+legend("topleft",lty = 1,col = c(1,2,3),legend = c("Método Media","Método Ingenuo","Método Ingenuo Estacional"))
+#legend es para etiquetar cada una de las líneas
+
+##OTRA FORMA
+x11()
+plot(part,plot.conf=F,,xlim=c(2005,2011),main="Proyección tasas de desempleo trimestre")
+lines(partaj1$mean,col=2)
+lines(partaj2$mean,col=3)
+lines(partaj3$mean,col=4)
+legend("topleft",lty = 1,col = c(1,2,3,4),legend = c("Método Media","Método Ingenuo","Método Ingenuo Estacional"))
+#legend es para etiquetar cada una de las líneas
