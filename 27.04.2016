@@ -1,0 +1,27 @@
+install.packages("foreign")
+require(foreign)
+install.packages("fpp")
+require(fpp)
+install.packages("forecast")
+library(forecast)
+
+pib<-read.csv("PIB.csv",header=T)#,dec = ",")
+pibts<-ts(pib[,2],start =1993,frequency = 4)
+View(pibts)
+
+plot(pibts)
+Acf(pibts)
+
+pibtspro<-meanf(pibts,4)
+plot(pibtspro)
+pibtsnai<-naive(pibts,4)
+plot(pibtsnai)
+pibtssnai<-snaive(pibts,4)
+plot(pibtssnai)
+pibtsder<-rwf(pibts,4,drift = T)
+plot(pibtsder)
+
+(evalmed<-accuracy(pibtspro))
+(evaling<-accuracy(pibtsnai))
+(evalsnai<-accuracy(pibtssnai))
+(evalder<-accuracy(pibtsder))
