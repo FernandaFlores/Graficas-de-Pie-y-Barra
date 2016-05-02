@@ -1,0 +1,67 @@
+library(foreign)
+require (fpp)
+
+pib<-read.csv("CRECIMIENTOPIB.csv")
+pibts<-ts(pib[,2],start = 1896,frequency = 1)
+plot(pibts, main="Crecimiento del PIB % anual de 1960-2015",xlab="AÑO",ylab="% PIB",col=6,col.main="aquamarine")
+
+###ANÁLISIS DE RESIDUOS
+#require(fpp)
+#residuals--residuales (se analizan los residuos para ver la variabilidad)
+#####Caracteristicas que deben tener los residuales
+##Var constante
+##No exista correlación entre los errores
+##Se deben distribuir normal
+
+res1 <- residuals(snaive(pibts))
+res1
+res2 <- residuals(rwf(pibts, 3, drift = T))
+res2
+
+###INGENUO ESTACIONAL
+plot(res1, main="Residuals de Ingenuo Estacional", ylab="residuales", xlab="años") ##se gráfica para saber si la varianza es constante
+###no se ve una varianza constante
+Acf(res1, main="ACF de residuales") #para saber si hay correlación o no entre los residuos
+###si se cumple este supuesto de correlación dado que sólo se sale uno y debe ser <5
+hist(res1, main="Histograma Residuales") #para conocer si los residuos se distribuyen normal
+###si cumple el supuesto de normalidad
+
+###DERIVA
+plot(res2, main="Residuales de Deriva", ylab="residuales", xlab="años")
+Acf(res2, main="ACF de Residuales")
+hist(res2, main="Histograma Residuales")
+
+###INGENUO
+res3<-residuals(naive(pibts))
+res3
+plot(res3, main="Residuales de Ingenuo", ylab="residuales", xlab="años")
+##no hay varianza constante
+Acf(res3, main="ACF de residuales")
+#si cumple el supuesto ya que solo un valor sale
+hist(res3, main="Histograma Residuales")
+#si se comporta normalmente
+
+###MEDIA
+res4<-residuals(meanf(pibts))
+res4
+plot(res4, main="Residuales de la Media", ylab="residuales", xlab="años")
+##no hay varianza constante
+Acf(res4, main="ACF de residuales")
+#si cumple supuesto de correlación
+hist(res4,nclass = "FD", main="Histograma Residuales") #nclass---número de clases que se usan en el histograma
+#no se comporta normal
+
+help("Box.test")
+Box.test(res1,lag = 10,fitdf = 0) ##box-pierce     ## lag--retrasos o momentos pronosticados si no es estacional usar 10 si es poner 2m, fitdf--parámetros que tenga la ST
+Box.test(res1,lag = 10,fitdf = 0,type = "Lj")##box ljun
+
+Box.test(res2,lag = 10,fitdf = 0)
+Box.test(res2,lag = 10,fitdf = 0,type = "Lj")
+
+Box.test(res3,lag = 10,fitdf = 0)
+Box.test(res3,lag = 10,fitdf = 0,type = "Lj")
+
+Box.test(res4,lag = 10,fitdf = 0)
+Box.test(res4,lag = 10,fitdf = 0,type = "Lj")
+
+##no se rechaza la Ho si es p-value>0.05 y es porque hay aleatoriedad e independencia en los residuos
