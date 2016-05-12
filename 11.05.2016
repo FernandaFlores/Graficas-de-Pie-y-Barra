@@ -1,0 +1,148 @@
+install.packages("fpp")
+install.packages("forecast")
+require (foreign)
+require(fpp)
+require(forecast)
+deso<-read.csv("tasas.csv",header = TRUE)
+deso <- ts(deso, start  = 2005, frequency = 4)
+mod1<-ses(deso,alpha=.2,initial="simple",h=4) #temporalidad del numero de pronosticos que quiero
+mod2<-ses(deso,alpha=.6,initial="simple",h=4)
+mod3<-ses(deso,alpha=1,initial="simple",h=4)
+plot(mod1,plot.conf=FALSE,ylab="desocupa",xlab="año",main="",fcol="black",type="o")
+#######################GRAFICANDO AJUSTES 
+lines(fitted(mod1),col="blue",type="o")
+lines(fitted(mod2),col="red",type="o")
+lines(fitted(mod3),col="green",type="o")
+#######################GRAFICANDO LA MEDIA DEL PRONOSTICO de cada uno de los modelos
+lines(mod1$mean, col="blue", type="o")
+lines(mod2$mean, col="red", type="o")
+lines(mod3$mean, col="green", type="o")
+
+legend("topleft",lty=1, col=c(1,"blue","red","green"), 
+       c("data", expression(alpha == 0.2), expression(alpha == 0.6),
+         expression(alpha == 0.89)),pch=1)
+#datos reales; ajustados 1,2,3; 
+names(mod1)
+ajus1<-mod1$fitted
+ajus2<-mod1$fitted
+ajus3<-mod1$fitted
+resmod1<-(deso-ajus1)#calculo de los residuales 
+resmod2<-(deso-ajus2)
+resmod3<-(deso-ajus3)
+mod123<-data.frame(deso,ajus1,ajus2,ajus3,resmod1,resmod2,resmod3)
+View(mod123)
+res1<-(resmod1-mod1$residuals)
+res2<-(resmod2-mod2$residuals)
+res3<-(resmod3-mod3$residuals)
+
+##################EJERCICIO#############################
+
+#elegir 2 ST sin tendencia ni estacionalidad
+#serie 1 alpha=.1, .6, .9
+#serie 2 alpha=.0001, .2, .987
+#graficar las ST
+#calcular el MAE, RMSE, MAPE, y SSE
+#decidir en cada una de las series cual elegian con base en los MAE, RMSE, MAPE y SSE
+#argumenten pq uds creen que es mejor utilizar un alpha cercano a 0 o cercano a 1 
+#subir a github y la grafica y la argumentacion enviarlo en word
+
+tasas<-read.csv("tasas.csv",header = TRUE)
+
+#serie 1
+part<-ts(tasas[,1],start = (2013),frequency = 4)
+mod1<-ses(part,alpha=.6,initial="simple",h=4)
+mod2<-ses(part,alpha=.1,initial="simple",h=4)
+mod3<-ses(part,alpha=.9,initial="simple",h=4)
+plot(mod1,plot.conf=FALSE,ylab="participacion",xlab="año",main="",fcol="black",type="o")
+
+#GRAFICANDO AJUSTES 
+lines(fitted(mod1),col="blue",type="o")
+lines(fitted(mod2),col="red",type="o")
+lines(fitted(mod3),col="green",type="o")
+
+#GRAFICANDO LA MEDIA DEL PRONOSTICO de cada uno de los modelos
+lines(mod1$mean, col="blue", type="o")
+lines(mod2$mean, col="red", type="o")
+lines(mod3$mean, col="green", type="o")
+legend("topleft",lty=1, col=c(1,"blue","red","green"), 
+       c("data", expression(alpha == 0.6), expression(alpha == 0.1),
+         expression(alpha == 0.9)),pch=1)
+
+#meanf(part,h)
+partpro<-meanf(part,4)
+
+#ingenio
+partnai<-naive(part,4)
+
+#ingenio estacional 
+partsnai<-snaive(part,4)
+
+#metodo de la deriva
+partder<-rwf(part,4,drift=TRUE)
+
+##EVALUANDO LOS MÉTODOS
+
+#meanf
+evalmed<-accuracy(partpro)
+evalmed
+
+#ingenio
+evaling<-accuracy(partnai)
+evaling
+
+#ingenio estacional 
+evalsnai<-accuracy(partsnai)
+evalsnai
+
+#metodo de la deriva
+evalder<-accuracy(partder)
+evalder
+
+#serie 2
+desoc<-ts(tasas[,2],start = (2013),frequency = 4)
+mod11<-ses(desoc,alpha=.0001,initial="simple",h=4)#temporalidad del numero de pronosticos que quiero
+mod22<-ses(desoc,alpha=.5,initial="simple",h=4)
+mod33<-ses(desoc,alpha=.987,initial="simple",h=4)
+plot(mod11,plot.conf=FALSE,ylab="desocupados",xlab="año",main="",fcol="black",type="o")
+
+#GRAFICANDO AJUSTES 
+lines(fitted(mod11),col="blue",type="o")
+lines(fitted(mod22),col="red",type="o")
+lines(fitted(mod33),col="green",type="o")
+
+#GRAFICANDO LA MEDIA DEL PRONOSTICO DE CADA MODELO
+lines(mod11$mean, col="blue", type="o")
+lines(mod22$mean, col="red", type="o")
+lines(mod33$mean, col="green", type="o")
+legend("topleft",lty=1, col=c(1,"blue","red","green"), 
+       c("data", expression(alpha == 0.0001), expression(alpha == 0.5),
+         expression(alpha == 0.897)),pch=1)
+
+#meanf(part,h)
+desocpro<-meanf(desoc,4)
+
+#ingenio
+desocnai<-naive(desoc,4)
+
+#ingenio estacional 
+desocsnai<-snaive(desoc,4)
+
+#metodo de la deriva
+desocder<-rwf(desoc,4,drift=TRUE)
+
+##EVALUANDO LOS MODELOS
+#meanf
+evalmed1<-accuracy(desocpro)
+evalmed1
+
+#ingenio
+evaling1<-accuracy(desocnai)
+evaling1
+
+#ingenio estacional 
+evalsnai1<-accuracy(desocsnai)
+evalsnai1
+
+#metodo de la deriva
+evalder1<-accuracy(desocder)
+evalder1
