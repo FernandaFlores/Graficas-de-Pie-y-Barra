@@ -1,0 +1,142 @@
+require (foreign)
+require(fpp)
+require(forecast)
+
+tasas<-read.csv("tasastodo.csv",header = TRUE) 
+tasas1<- ts(tasas[,5], start  = 2005, frequency = 4)
+tasas1
+plot(tasas1,main=”Trabajo Asalariado”,xlab=”Año”,ylab=”%”)
+
+modHL<-holt(tasas1,initial="simple",h=4)
+modHE<-holt(tasas1,initial="simple",exponential = T,h=4)
+modAA<-holt(tasas1,damped = T)
+modMA<-holt(tasas1,exponential = T,damped = T)
+modHWA<-hw(tasas1,seasonal = "additive")
+modHWM<-hw(tasas1,seasonal = "multiplicative")
+
+plot(modHL,plot.conf=FALSE,ylab="TASA",xlab="año",main="",fcol="black",type="o")
+plot(modHE,plot.conf=FALSE,ylab="TASA",xlab="año",main="",fcol="black",type="o")
+plot(modAA,plot.conf=FALSE,ylab="TASA",xlab="año",main="",fcol="black",type="o")
+plot(modMA,plot.conf=FALSE,ylab="TASA",xlab="año",main="",fcol="black",type="o")
+plot(modHWA,plot.conf=FALSE,ylab="TASA",xlab="año",main="",fcol="black",type="o")
+plot(modHWM,plot.conf=FALSE,ylab="TASA",xlab="año",main="",fcol="black",type="o")
+
+
+#GRAFICANDO AJUSTES firred--ajuste del modelo a tu ST
+lines(fitted(modHL),col=”blue”,type="o")
+lines(fitted(modHE),col=”red”,type="o")
+lines(fitted(modAA),col="green",type="o")
+lines(fitted(modMA),col="magenta",type="o")
+lines(fitted(modHWA),col="brown1",type="o")
+lines(fitted(modHWM),col=2,type="o")
+
+#GRAFICANDO LA MEDIA DEL PRONOSTICO 
+lines(modHL$mean, col="blue", type="o")
+lines(modHE$mean, col="red", type="o")
+lines(modAA$mean, col="green", type="o")
+lines(modMA$mean,col="magenta",type="o")
+lines(modHWA$mean,col="brown1",type="o")
+lines(modHWM$mean,col=2,type="o")
+
+legend("topleft",lty=1, col=c(1,"blue","red","green","magenta","brown1",2), 
+       c("data", expression("Holt Lineal"), expression("Holt Exponencial"),
+         expression("Aditiva Amortiguado"),expression("Multiplicativa Amortiguado"),
+         expression("Holt Winter Aditivo"),expression("Holt Winter Multiplicativo")),pch=1)
+
+#meanf
+tasapro<-meanf(tasas1,4)
+
+#ingenio
+tasanai<-naive(tasas1,4)
+
+#ingenio estacional
+tasasnai<-snaive(tasas1,4)
+
+#metodo de la deriva
+tasader<-rwf(tasas1,4,drift=TRUE)
+
+#Evaluando cada método
+#meanf
+evalmed<-accuracy(tasapro)
+evalmed
+
+#ingenio
+evaling<-accuracy(tasanai)
+evaling
+
+#ingenio estacional 
+evalsnai<-accuracy(tasasnai)
+evalsnai
+
+#metodo de la deriva
+evalder<-accuracy(tasader)
+evalder
+
+
+########################################################
+tasas2<-ts(tasas[,7], start  = 2005, frequency = 4)
+plot(tasas2,main="Condiciones Críticas de Ocupación",xlab="Año",ylab="%")
+
+modHL1<-holt(tasas2,initial="simple",h=4)
+modHE1<-holt(tasas2,initial="simple",exponential = T,h=4)
+modAA1<-holt(tasas2,damped = T)
+modMA1<-holt(tasas2,damped = T,exponential = T)
+modHWA1<-hw(tasas2,seasonal = "additive")
+modHWM1<-hw(tasas2,seasonal = "multiplicative")
+
+plot(modHL1,plot.conf=FALSE,ylab="TASA",xlab="año",main="",fcol="black",type="o")
+plot(modHE1,plot.conf=FALSE,ylab="TASA",xlab="año",main="",fcol="black",type="o")
+plot(modAA1,plot.conf=FALSE,ylab="TASA",xlab="año",main="",fcol="black",type="o")
+plot(modMA1,plot.conf=FALSE,ylab="TASA",xlab="año",main="",fcol="black",type="o")
+plot(modHWA1,plot.conf=FALSE,ylab="TASA",xlab="año",main="",fcol="black",type="o")
+plot(modHWM1,plot.conf=FALSE,ylab="TASA",xlab="año",main="",fcol="black",type="o")
+
+#GRAFICANDO AJUSTES 
+lines(fitted(modHL1),col="blue",type="o")
+lines(fitted(modHE1),col="red",type="o")
+lines(fitted(modAA1),col="green",type="o")
+lines(fitted(modMA1),col="magenta",type="o")
+lines(fitted(modHWA1),col="orange",type="o")
+lines(fitted(modHWM1),col=2,type="o")
+
+#GRAFICANDO LA MEDIA DEL PRONOSTICO
+lines(modHL1$mean,col="blue",type="o")
+lines(modHE1$mean,col="red",type="o")
+lines(modAA1$mean,col="green",type="o")
+lines(modMA1$mean,col="magenta",type="o")
+lines(modHWA1$mean,col="orange",type="o")
+lines(modHWM1$mean,col=2,type="o")
+
+legend("topleft",lty=1, col=c(1,"blue","red","green","magenta","orange",2), 
+       c("data", expression("Holt Lineal"), expression("Holt Exponencial"),
+         expression("Aditiva Amortiguado"),expression("Multiplicativa Amortiguado"),
+         expression("Holt Winter Aditivo"),expression("Holt Winter Multiplicativo")),pch=1)
+
+#meanf
+tasapro2<-meanf(tasas2,4)
+
+#ingenio
+tasanai2<-naive(tasas2,4)
+
+#ingenio estacional 
+tasasnai2<-snaive(tasas2,4)
+
+#metodo de la deriva
+tasader2<-rwf(tasas2,4,drift=TRUE)
+
+#Evaluando cada metodo
+#meanf
+evalmed2<-accuracy(tasapro2)
+evalmed2
+
+#ingenio
+evaling2<-accuracy(tasanai2)
+evaling2
+
+#ingenio estacional 
+evalsnai2<-accuracy(tasasnai2)
+evalsnai2
+
+#metodo de la deriva
+evalder2<-accuracy(tasader2)
+evalder2
