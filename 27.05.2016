@@ -1,0 +1,72 @@
+library(fpp)
+library(foreign)
+
+#1. Elegir ST
+tasas<-read.csv("tasastodo.csv")
+tasas<-ts(tasas[,1],start = 2005,frequency = 4)
+tasas
+
+#2. Aplicar fn. auto.arima()
+mod1<-auto.arima(tasas,seasonal = FALSE)  
+mod1  #Y't = 59.8921 + e(t) + 0.3964e(t-1)
+
+#3. Aplicar fn. Arima(p,q,d) con dos modelos diferentes al del modelo auto.arima
+mod2<-Arima(tasas,order = c(3,1,5))
+mod2
+mod3<-Arima(tasas,order = c(2,5,2))
+mod3
+
+  #3.1 Generar los pronósticos de los tres modelos
+  pro1<-forecast(mod1,h=4)
+  pro1
+  pro2<-forecast(mod2,h=4)
+  pro2
+  pro3<-forecast(mod3,h=4)
+  pro3
+
+
+#4. Generar una gráfica con los valores reales y los valores ajustados de los 3 modelos
+  plot(pro1, plot.conf=FALSE,xlab="año", main="TASA DE DESOCUPACIÓN", fcol="green", type="o")
+  lines(fitted(pro1),col=5,type="o")
+  lines(fitted(pro2), col=6,type="o")
+  lines(fitted(pro3), col=15, type="o")
+#5. Generar gráfica con los 3 valores reales y los valores ajustados y pronosticados en los 3 modelos
+    #número de pronósticos-> 4
+  x11()
+plot(pro1, plot.conf=FALSE,ylim=c(45,61),xlab="año", main="TASA DE DESOCUPACIÓN", fcol="green", type="o")
+lines(fitted(pro1),col="darkred",type="o")
+lines(fitted(pro2), col=6,type="o")
+lines(fitted(pro3), col=15, type="o")
+lines(pro1$mean, col="blue", type="o")
+lines(pro2$mean, col="red", type="o")
+lines(pro3$mean, col="coral4", type="o")
+legend("topleft",lty=1, col=c("blue","red","coral4"), c(expression(pro1),expression(pro2),expression(pro3)),pch=1)
+
+###################################################################################
+##COMPARACIÓN CON 2010
+
+tasas1<-read.csv("tasastodo.csv")
+tasas1<-ts(tasas1[,1],start = 2005,frequency = 4)
+tasas1<-window(tasas, start=2005,end=c(2010,4))
+tasas1
+
+mod4<-auto.arima(tasas1,seasonal = FALSE)  
+mod4
+
+pro4.1<-forecast(mod4,h=4)
+pro4.1
+
+
+plot(pro4.1, plot.conf=FALSE,xlab="año", main="TASA DE DESOCUPACIÓN", fcol="green", type="o")
+lines(fitted(pro4.1),col=5,type="o")
+
+
+plot(pro4.1, plot.conf=FALSE,xlab="año", main="TASA DE DESOCUPACIÓN", fcol="green", type="o")
+lines(fitted(pro4.1),col="darkred",type="o")
+lines(pro4.1$mean, col="blue", type="o")
+legend("topleft",lty=1, col=c("blue","red","coral4"), expression(pro4.1),pch=1)
+
+##El prónostico en comparación al real es muy cierto
+tasas1
+tasas
+
